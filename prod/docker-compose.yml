@@ -31,7 +31,6 @@ services:
       - 8000
     volumes:
       - ./bundles:/backend/bundles
-      - ./media:/backend/media
       - ../media:/backend/media
     environment:
       SECRET_KEY: django-insecure-0if40nf4nf93n4
@@ -42,7 +41,6 @@ services:
       ALLOWED_HOSTS: localhost, 127.0.0.1, 0.0.0.0
     depends_on:
       - db
-    restart: always
 
   nginx:
     build: nginx:latest
