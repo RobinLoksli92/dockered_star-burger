@@ -1,0 +1,13 @@
+django==3.2
+django-debug-toolbar==3.2.1
+environs[django]==9.3.2
+djangorestframework==3.13.1
+python-dotenv==0.20.0
+geopy==2.2.0
+requests==2.28.1
+django-phonenumber-field==6.3.0
+phonenumbers==8.12.54
+rollbar==0.16.3
+psycopg2-binary==2.9.5
+dj-database-url==1.2.0
+Pillow==9.4.0

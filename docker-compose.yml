@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  db:
+    container_name: postgres
+    image: postgres:12.0-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123321
+    ports:
+      - "5432:5432"
+
+  frontend:
+    build: frontend
+    container_name: nodejs
+    volumes:
+      - ./bundles:/frontend/bundles
+    command: ./node_modules/.bin/parcel watch bundles-src/index.js --dist-dir bundles --public-url "./"
+    ports:
+      - "3000:3000"
+  
+  backend:
+    build: backend
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bundles:/backend/bundles
+      - ./media:/backend/media
+      - ./backend:/backend
+    environment:
+      SECRET_KEY: django-insecure-0if40nf4nf93n4
+      YANDEX_APIKEY: b9aee6c8-18ae-4374-b889-653fddb6b379
+      ROLLBAR_TOKEN: 23b838cdfd4943899cfcfed831d9c541
+      DB_URL: postgres://admin:123321@db:5432/mydb
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost, 127.0.0.1, 0.0.0.0
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+
