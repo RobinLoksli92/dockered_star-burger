@@ -47,6 +47,9 @@ services:
   nginx:
     build: nginx:latest
     container_name: nginx
+    volumes:
+      - ./nginx.conf:/opt/dockered_star_burger/prod/nginx.conf
+      - ../static:/dockered_star_burger/static
     ports:
       - "80:80"
     depends_on:
