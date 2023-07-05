@@ -13,6 +13,88 @@
 
 Третий интерфейс — это админка. Преимущественно им пользуются программисты при разработке сайта. Также сюда заходит менеджер, чтобы обновить меню ресторанов Star Burger.
 
+## Docker
+
+### Dev версия
+
+- Скачайте код:
+```sh
+https://github.com/RobinLoksli92/dockered_star-burger.git
+```
+
+- Перейдите в каталог проекта:
+```sh
+cd dockered_star-burger
+```
+
+- [Установите Docker](https://docs.docker.com/engine/install/), если этого ещё не сделали.
+
+Проверьте, что `docker` и `docker-compose` установлены и корректно настроены. Выполните в командной строке:
+```sh
+$ docker --version
+Docker version 20.10.14, build a224086
+$ docker compose version
+docker-compose version 1.27.4, build 40524192
+```
+
+- Соберите Docker образы с помощью команды:
+```sh
+docker compose build
+```
+
+- Создайте файл `.env` с переменными окружения в каталоге проекта:
+  -  `DEBUG` — дебаг-режим. Поставьте False.
+  - `YANDEX_APIKEY` - токен для [геокодера Яндекс](https://developer.tech.yandex.ru/services/), чтобы определять расстояние от ресторана до адреса. Обязательная переменная окружения.
+  - `ROLLBAR_TOKEN` - токен для сервиса [Rollbar](https://rollbar.com/), чтобы получать сообщения об ошибках, исключая HTTP404. Обязательная переменная окружения.
+  - `DB_URL` - конфигурация БД, указывается в виде URL, см. [примеры](https://github.com/jacobian/dj-database-url#id7). Если значение не указано, то используется движок `SQLite`, имя файла `db.sqlite`. Для использования `PostgreSQL` в `requirements.txt` добавлена библиотека [psycorg2](https://pypi.org/project/psycopg2/).
+  - `POSTGRES_USER`, `POSTGRES_PASSWORD` - имя пользователя и пароль для авторизации в БД.
+  - `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
+
+- Запустите контейнеры для фронтенда, базы данных и бэкэнда:
+
+```sh
+docker compose up -d
+```
+
+- Соберите статику бэкенда и необходимые миграции:
+
+```sh
+docker compose exec -it backend python manage.py collectstatic --noinput
+docker compose exec -it backend python manage.py migrate
+```
+
+Чтобы увидеть позиции меню, заполните в админке доступные блюда для ресторанов.
+
+
+### Prod версия
+
+- Установите на сервере:
+    - [Git](https://github.com/git-guides/install-git)
+    - [Docker и Docker Compose](https://docs.docker.com/engine/install/)
+    
+- Склонируйте проект на свой сервер
+
+```sh
+cd /opt/
+git clone https://github.com/RobinLoksli92/dockered_star-burger.git
+```
+
+Перейдите в каталог `prod`. Создайте файл `.env` в каталоге  со следующими настройками:
+
+- `YANDEX_APIKEY` - токен для [геокодера Яндекс](https://developer.tech.yandex.ru/services/), чтобы определять расстояние от ресторана до адреса. Обязательная переменная окружения.
+- `ROLLBAR_TOKEN` - токен для сервиса [Rollbar](https://rollbar.com/), чтобы получать сообщения об ошибках, исключая HTTP404. Обязательная переменная окружения.
+- `DB_URL` - конфигурация БД, указывается в виде URL, см. [примеры](https://github.com/jacobian/dj-database-url#id7). Если значение не указано, то используется движок `SQLite`, имя файла `db.sqlite`. Для использования `PostgreSQL` в `requirements.txt` добавлена библиотека [psycorg2](https://pypi.org/project/psycopg2/).
+- `POSTGRES_USER`, `POSTGRES_PASSWORD` - имя пользователя и пароль для авторизации в БД.
+- `SECRET_KEY` — секретный ключ проекта. Он отвечает за шифрование на сайте. Например, им зашифрованы все пароли на вашем сайте.
+
+- Соберите докер образы фронтенда, бэкэнда, базы данных и nginx для продакш-версии:
+
+```sh
+cd /opt/dockered_star-burger/prod
+./deploy.sh
+```
+Откройте в браузере развернувшийся сайт на вашем хосте.
+
 ## Как запустить dev-версию сайта
 
 Для запуска сайта нужно запустить **одновременно** бэкенд и фронтенд, в двух терминалах.

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 git pull
-cd star_burger_dockered/prod
 docker compose up -d
 docker compose exec -it backend python manage.py collectstatic --noinput
 docker compose exec -it backend python manage.py migrate
